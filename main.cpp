@@ -2,8 +2,6 @@
 
 #include "main.h"
 
-
-
 int main(int argc, char** argv) {
 	
 	std::string command_string;
@@ -17,6 +15,9 @@ int main(int argc, char** argv) {
 
 		std::getline(std::cin, command_string);  // Get user input
 		std::vector<std::string> command_tokens = parse_user_input(command_string);  // Parses input
+
+		Interpretter interpretter(command_tokens);  // Interpret the commands in the command tokens vector
+		interpretter.execute_command();
 	}
 	
 

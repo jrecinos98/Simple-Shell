@@ -9,6 +9,8 @@
 #include <vector>
 #include <sstream>
 
+#include "Interpretter.h"
+
 // Parses the string the user enters and returns it as a vector of tokens
 std::vector<std::string> parse_user_input(std::string& command_string) {
 	std::vector<std::string> command_tokens;
@@ -30,9 +32,6 @@ std::vector<std::string> parse_user_input(std::string& command_string) {
 	    if (prev < line.length()){
 	        command_tokens.push_back(line.substr(prev, std::string::npos));
 	    }
-	}
-	for(unsigned int i = 0; i < command_tokens.size(); i++){
-		printf("Token: %s\n", command_tokens[i].c_str());
 	}
 
 	return command_tokens;
