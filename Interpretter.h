@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <iostream>
+
+#define STD_INPUT 0
+#define STD_OUTPUT 1
 
 
 class Interpretter {
@@ -28,6 +32,7 @@ public:
 private:
 	std::vector<std::string> command_tokens;
 	int num_children;
+	unsigned int index;
 
 
 };
