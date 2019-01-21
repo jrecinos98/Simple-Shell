@@ -1,6 +1,5 @@
 handle ctrl-D
 handle < >
-error checks
-clean up dynamically allocated memory
-clean up zombie child processes
+error checks (testing)
+clean up zombie child processes (signal/handler function/SIGCHLD signal)
 handle cd command

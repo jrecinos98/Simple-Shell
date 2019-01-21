@@ -37,7 +37,7 @@ void Interpretter::execute_command(){
 					close(fd[1]);  // No longer needed
 					if(size > 0){
 						if(execvp(command[0], command) < 0){
-							perror("ERROR:");
+							perror("ERROR");
 						}
 					}
 					int sub_status;
@@ -89,6 +89,7 @@ char** Interpretter::get_next_command(int& size){
 			max_size++;  // Update max size
 			std::copy(command, command + size, temp);  // Copy command to temp
 			delete [] command;  // Free old memory
+			command = nullptr;
 			command = temp;  // Reassign to enlarged array			
 		}
 		char *token = const_cast<char*> ( this->command_tokens[index].c_str() );
@@ -101,6 +102,7 @@ char** Interpretter::get_next_command(int& size){
 		max_size++;  // Update max size
 		std::copy(command, command + size, temp);  // Copy command to temp
 		delete [] command;  // Free old memory
+		command = nullptr;
 		command = temp;  // Reassign to enlarged array			
 	}
 	command[size++] = NULL;  // Add NULLL at end
