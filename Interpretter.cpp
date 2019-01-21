@@ -15,6 +15,15 @@ void Interpretter::execute_command(){
 		while(1){
 			int size = 0;
 			char **command = get_next_command(size);
+
+			if(index < command_tokens.size() && this->command_tokens[this->index] == "<"){
+				this->index++;
+			}
+
+			if(index < command_tokens.size() && this->command_tokens[this->index] == ">"){
+				this->index++;
+			}
+
 			if(index < command_tokens.size() && this->command_tokens[this->index] == "|"){
 				this->index++;
 				int fd[2];  // File descriptors for pipe
@@ -27,27 +36,36 @@ void Interpretter::execute_command(){
 					dup(fd[1]);  // Put in process table
 					close(fd[1]);  // No longer needed
 					if(size > 0){
-						execvp(command[0], command);
+						if(execvp(command[0], command) < 0){
+							perror("ERROR:");
+						}
 					}
 					int sub_status;
 					waitpid(sub_pid, &sub_status, 0);
+					delete [] command;  // Free memory from the getnextcommand() call
 					_exit(1);
 				}else{
 					close(fd[1]);  // Doesn't need to write to pipe
 					close(STD_INPUT);  // Will read from pipe instead
 					dup(fd[0]);  // Put in process table
 					close(fd[0]);  // No longer needed
+					delete [] command;  // Free memory from the getnextcommand() call
  				}
 			}else{
 				if(size > 0){
-					execvp(command[0], command);
+					if(execvp(command[0], command) < 0){
+						perror("ERROR:");
+					}
 				}
+				delete [] command;  // Free memory from the getnextcommand() call
 				_exit(1);				
 			}
 		}
 	}else{
 		int status;
-		waitpid(pid, &status, 0);
+		if(this->command_tokens[command_tokens.size() - 1] != "&"){
+			waitpid(pid, &status, 0);
+		}
 	}
 }
 

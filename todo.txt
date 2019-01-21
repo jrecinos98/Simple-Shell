@@ -1,0 +1,6 @@
+handle ctrl-D
+handle < >
+error checks
+clean up dynamically allocated memory
+clean up zombie child processes
+handle cd command

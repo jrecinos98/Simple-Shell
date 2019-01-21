@@ -14,10 +14,14 @@ int main(int argc, char** argv) {
 		}
 
 		std::getline(std::cin, command_string);  // Get user input
-		std::vector<std::string> command_tokens = parse_user_input(command_string);  // Parses input
+		if(std::cin.eof()){  // Handle no input/ ctrl + D
+			return 0;
+		}else if(command_string != ""){
+			std::vector<std::string> command_tokens = parse_user_input(command_string);  // Parses input
+			Interpretter interpretter(command_tokens);  // Interpret the commands in the command tokens vector
+			interpretter.execute_command();
+		}
 
-		Interpretter interpretter(command_tokens);  // Interpret the commands in the command tokens vector
-		interpretter.execute_command();
 	}
 	
 
