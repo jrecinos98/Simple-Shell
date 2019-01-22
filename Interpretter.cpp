@@ -2,20 +2,22 @@
 
 
 const std::vector<char> Interpretter::SPECIAL_TOKENS = {'|', '<', '>', '&'};
+int parent_read_fd;
 
-
-Interpretter::Interpretter(std::vector<std::string> command_tokens, int file_desc){
+Interpretter::Interpretter(std::vector<std::string> command_tokens, int error_fd[]){
 	this->command_tokens = command_tokens;
 	this->index = 0;
-	this->file_desc = file_desc;
+	this->error_fd = error_fd;
 }
 
 void Interpretter::execute_command(){
 	pid_t pid = fork();
 	if(pid == 0){
+
 		close(STD_ERROR);  // Going to pipe errors out instead
-		dup(file_desc);  // Write side of pipe for errors
-		close(file_desc);  // No longer needed
+		close(error_fd[0]);
+		dup(error_fd[1]);  // Write side of pipe for errors
+		close(error_fd[1]);  // No longer needed
 
 		while(1){
 			int size = 0;
@@ -99,6 +101,10 @@ void Interpretter::execute_command(){
 			}
 		}
 	}else{
+		close(error_fd[1]);
+		parent_read_fd = dup(error_fd[0]);
+		close(error_fd[0]);
+
 		// Handle cd command
 		int size = 0;
 		char **command = get_next_command(size);  // To check for cd
@@ -109,9 +115,9 @@ void Interpretter::execute_command(){
 				chdir(command[1]);  // Changes directory to the specified path, MUST BE DONE IN PARENT
 			}
 		}
-		close(file_desc);
 		delete [] command;
 		int status;
+
 		if(this->command_tokens[command_tokens.size() - 1] != "&"){
 			waitpid(pid, &status, 0);
 		}

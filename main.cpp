@@ -14,8 +14,9 @@ int main(int argc, char** argv) {
 	while(1){
 		int error_fd[2];
 		pipe(error_fd);
-		file_desc_global = dup(error_fd[0]);  // Replace fd so that can listen for errors
-		close(error_fd[0]);  // No longer needed
+
+		//file_desc_global = dup(error_fd[0]);  // Replace fd so that can listen for errors
+		//close(error_fd[0]);  // No longer needed
 
 		if(argc == 1) {
 			printf("shell: ");
@@ -29,7 +30,7 @@ int main(int argc, char** argv) {
 			return 0;
 		}else if(command_string != ""){
 			std::vector<std::string> command_tokens = parse_user_input(command_string);  // Parses input
-			Interpretter interpretter(command_tokens, error_fd[1]);  // Interpret the commands in the command tokens vector
+			Interpretter interpretter(command_tokens, error_fd);  // Interpret the commands in the command tokens vector
 			interpretter.execute_command();
 
 		}

@@ -9,6 +9,7 @@
 #include <vector>
 #include <sstream>
 #include "Interpretter.h"
+#include "fd.h"
 #include <signal.h>  // To handle sig_int 
 
 #define BUFSIZE 2048
@@ -51,18 +52,12 @@ void sig_int_handler(int sig){
 void sig_chld_handler(int sig){
 	// Check pipe at end of loop for errors
 	char buf[BUFSIZE] = {0};
-	int size = read(file_desc_global, buf, BUFSIZE);
+	int size = read(parent_read_fd, buf, BUFSIZE);
 	if(size > 0){
 		fprintf(stderr, "ERROR: %s", buf);
 	}
-	close(file_desc_global);
-
+	close(parent_read_fd);
 	waitpid(-1, NULL, WNOHANG);
 }
-
-
-
-
-
 
 #endif /* MAIN_H */
