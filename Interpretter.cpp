@@ -93,12 +93,7 @@ void Interpretter::execute_command(){
 						perror("");
 					}
 				}
-				std::ifstream infile;
-				infile.open("error.txt");
-				std::string line;
-				std::getline(infile, line);
-				printf("ERROR: %s", line.c_str());
-				fflush(stdout);
+
 				delete [] command;  // Free memory from the getnextcommand() call
 
 				_exit(1);				

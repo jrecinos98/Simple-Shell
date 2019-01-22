@@ -42,6 +42,19 @@ void sig_int_handler(int sig){
 }
 
 void sig_chld_handler(int sig){
+	std::ifstream infile;
+	infile.open("error.txt");
+	if(infile.good()){
+		std::string line;
+		std::getline(infile, line);
+		if(line != ""){
+			fprintf(stderr, "ERROR: %s\n", line.c_str());
+			fflush(stderr);
+			infile.close();
+			remove("error.txt");			
+		}
+	}
+
 	waitpid(-1, NULL, WNOHANG);
 }
 
