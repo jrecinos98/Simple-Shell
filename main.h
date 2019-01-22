@@ -11,6 +11,12 @@
 #include "Interpretter.h"
 #include <signal.h>  // To handle sig_int 
 
+#define BUFSIZE 2048
+#define STD_ERROR 2
+#define CHILD_ERROR 4
+
+int file_desc_global;
+
 // Parses the string the user enters and returns it as a vector of tokens
 std::vector<std::string> parse_user_input(std::string& command_string) {
 	std::vector<std::string> command_tokens;
@@ -39,20 +45,16 @@ std::vector<std::string> parse_user_input(std::string& command_string) {
 
 // Makes SIGINT do nothing so that shell will not exit
 void sig_int_handler(int sig){
+
 }
 
 void sig_chld_handler(int sig){
-	std::ifstream infile;
-	infile.open("error.txt");
-	if(infile.good()){
-		std::string line;
-		std::getline(infile, line);
-		if(line != ""){
-			fprintf(stderr, "ERROR: %s\n", line.c_str());
-			fflush(stderr);
-			infile.close();
-			remove("error.txt");			
-		}
+	// Check pipe at end of loop for errors
+	char buf[BUFSIZE];
+	int size = read(file_desc_global, buf, BUFSIZE);
+	if(size > 0){
+		fprintf(stderr, "ERROR: %s", buf);
+		fflush(stderr);
 	}
 
 	waitpid(-1, NULL, WNOHANG);

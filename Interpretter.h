@@ -15,14 +15,17 @@
 #define STD_INPUT 0
 #define STD_OUTPUT 1
 #define STD_ERROR 2
+#define CHILD_ERRORS 10
+
 #define BUFSIZE 2048
 
 class Interpretter {
 	static const std::vector<char> SPECIAL_TOKENS;
+
 public:
 
 	// Constructor takes command tokens that were generated in main
-	Interpretter(std::vector<std::string> command_tokens);
+	Interpretter(std::vector<std::string> command_tokens, int file_desc);
 	
 	// Executes commands present in command tokens
 	void execute_command();
@@ -33,11 +36,12 @@ public:
 	// Generates the command/arguments to be passed to exec
 	char** get_next_command(int& size);
 
+
 private:
 	std::vector<std::string> command_tokens;
 	int num_children;
 	unsigned int index;
-
+	int file_desc;
 
 };
 

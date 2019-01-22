@@ -4,14 +4,18 @@
 const std::vector<char> Interpretter::SPECIAL_TOKENS = {'|', '<', '>', '&'};
 
 
-Interpretter::Interpretter(std::vector<std::string> command_tokens){
+Interpretter::Interpretter(std::vector<std::string> command_tokens, int file_desc){
 	this->command_tokens = command_tokens;
 	this->index = 0;
+	this->file_desc = file_desc;
 }
 
 void Interpretter::execute_command(){
 	pid_t pid = fork();
 	if(pid == 0){
+		close(STD_ERROR);  // Going to pipe errors out instead
+		dup(file_desc);  // Write side of pipe for errors
+		close(file_desc);  // No longer needed
 
 		while(1){
 			int size = 0;
@@ -81,13 +85,6 @@ void Interpretter::execute_command(){
 					delete [] command;  // Free memory from the getnextcommand() call
  				}
 			}else{
-				int fd1 = open("error.txt", O_WRONLY|O_CREAT, 0666);
-				if(fd1 > 0){  // Successful open/create of fd
-					close(STD_ERROR);  // Close stdout
-					dup(fd1);  // Put in process table for stdout to write to file
-					close(fd1);  // Close unneeded file descriptor
-				}
-
 				if(size > 0){
 					if(execvp(command[0], command) < 0){
 						perror("");
@@ -95,7 +92,6 @@ void Interpretter::execute_command(){
 				}
 
 				delete [] command;  // Free memory from the getnextcommand() call
-
 				_exit(1);				
 			}
 		}
@@ -110,6 +106,7 @@ void Interpretter::execute_command(){
 				chdir(command[1]);  // Changes directory to the specified path, MUST BE DONE IN PARENT
 			}
 		}
+		close(file_desc);
 		int status;
 		if(this->command_tokens[command_tokens.size() - 1] != "&"){
 			waitpid(pid, &status, 0);
