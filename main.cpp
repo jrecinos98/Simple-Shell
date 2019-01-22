@@ -14,14 +14,13 @@ int main(int argc, char** argv) {
 	while(1){
 		int error_fd[2];
 		pipe(error_fd);
-		close(file_desc_global);
 		file_desc_global = dup(error_fd[0]);  // Replace fd so that can listen for errors
 		close(error_fd[0]);  // No longer needed
 
 		if(argc == 1) {
 			printf("shell: ");
 		}else if(argc > 1 && strcmp(argv[1],"-n") != 0) {
-			printf("Improper ussage: Bad command line argument\n");
+			printf("Improper usage: Bad command line argument\n");
 			return 1;
 		}
 
@@ -32,7 +31,6 @@ int main(int argc, char** argv) {
 			std::vector<std::string> command_tokens = parse_user_input(command_string);  // Parses input
 			Interpretter interpretter(command_tokens, error_fd[1]);  // Interpret the commands in the command tokens vector
 			interpretter.execute_command();
-			close(error_fd[1]);  // Close write side
 
 		}
 

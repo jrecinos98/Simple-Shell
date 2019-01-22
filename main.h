@@ -50,12 +50,12 @@ void sig_int_handler(int sig){
 
 void sig_chld_handler(int sig){
 	// Check pipe at end of loop for errors
-	char buf[BUFSIZE];
+	char buf[BUFSIZE] = {0};
 	int size = read(file_desc_global, buf, BUFSIZE);
 	if(size > 0){
 		fprintf(stderr, "ERROR: %s", buf);
-		fflush(stderr);
 	}
+	close(file_desc_global);
 
 	waitpid(-1, NULL, WNOHANG);
 }
