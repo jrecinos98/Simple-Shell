@@ -1,2 +1,0 @@
-handle cat error
-error checks (testing)
