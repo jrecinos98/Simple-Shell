@@ -39,12 +39,10 @@ std::vector<std::string> parse_user_input(std::string& command_string) {
 
 // Makes SIGINT do nothing so that shell will not exit
 void sig_int_handler(int sig){
-	fflush(stdout);
 }
 
 void sig_chld_handler(int sig){
 	waitpid(-1, NULL, WNOHANG);
-	fflush(stdout);
 }
 
 

@@ -12,18 +12,51 @@ Interpretter::Interpretter(std::vector<std::string> command_tokens){
 void Interpretter::execute_command(){
 	pid_t pid = fork();
 	if(pid == 0){
+	    
+		// Redirect stderr to a string to handle later
+	    char buf[BUFSIZE];
+		freopen("/dev/null", "a", stderr);
+		setbuf(stderr, buf);
+
 		while(1){
 			int size = 0;
 			char **command = get_next_command(size);
 
+			// Handle input redirection
 			if(index < command_tokens.size() && this->command_tokens[this->index] == "<"){
 				this->index++;
+				int fd = open(this->command_tokens[this->index++].c_str(), O_RDONLY);
+				if(fd > 0){  // Successful open of fd
+					close(STD_INPUT);  // Close stdin
+					dup(fd);  // Put in process table for stdin to read from file
+					close(fd);  // Close unneeded file descriptor
+				}else{
+					perror("ERROR:");
+					_exit(1);
+				}
 			}
 
+			// Handle output redirection
 			if(index < command_tokens.size() && this->command_tokens[this->index] == ">"){
 				this->index++;
+				int fd = open(this->command_tokens[this->index++].c_str(), O_WRONLY|O_CREAT, 0666);
+				if(fd > 0){  // Successful open/create of fd
+					close(STD_OUTPUT);  // Close stdout
+					dup(fd);  // Put in process table for stdout to write to file
+					close(fd);  // Close unneeded file descriptor
+				}else{
+					perror("ERROR:");
+					_exit(1);
+				}
 			}
 
+
+			// Handle cd command
+			if(size >= 2 && std::string(command[0]) == "cd" && command[1] != NULL){
+				_exit(1);
+			}
+
+			// Handle pipes
 			if(index < command_tokens.size() && this->command_tokens[this->index] == "|"){
 				this->index++;
 				int fd[2];  // File descriptors for pipe
@@ -37,12 +70,15 @@ void Interpretter::execute_command(){
 					close(fd[1]);  // No longer needed
 					if(size > 0){
 						if(execvp(command[0], command) < 0){
-							perror("ERROR");
+							perror("ERROR:");
 						}
 					}
 					int sub_status;
 					waitpid(sub_pid, &sub_status, 0);
 					delete [] command;  // Free memory from the getnextcommand() call
+
+					freopen ("/dev/tty", "a", stderr);
+
 					_exit(1);
 				}else{
 					close(fd[1]);  // Doesn't need to write to pipe
@@ -58,10 +94,20 @@ void Interpretter::execute_command(){
 					}
 				}
 				delete [] command;  // Free memory from the getnextcommand() call
+
+				freopen ("/dev/tty", "a", stderr);
+				fprintf(stderr, "ERROR:%s", buf);
+
 				_exit(1);				
 			}
 		}
 	}else{
+		// Handle cd command
+		int size = 0;
+		char **command = get_next_command(size);  // To check for cd
+		if(size >= 2 && std::string(command[0]) == "cd" && command[1] != NULL){
+			chdir(command[1]);  // Changes directory to the specified path, MUST BE DONE IN PARENT
+		}
 		int status;
 		if(this->command_tokens[command_tokens.size() - 1] != "&"){
 			waitpid(pid, &status, 0);

@@ -7,11 +7,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <iostream>
 
 #define STD_INPUT 0
 #define STD_OUTPUT 1
-
+#define BUFSIZE 2048
 
 class Interpretter {
 	static const std::vector<char> SPECIAL_TOKENS;
