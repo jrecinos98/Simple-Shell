@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 #include <sstream>
-
 #include "Interpretter.h"
+#include <signal.h>  // To handle sig_int 
 
 // Parses the string the user enters and returns it as a vector of tokens
 std::vector<std::string> parse_user_input(std::string& command_string) {
@@ -37,7 +37,15 @@ std::vector<std::string> parse_user_input(std::string& command_string) {
 	return command_tokens;
 }
 
+// Makes SIGINT do nothing so that shell will not exit
+void sig_int_handler(int sig){
+	fflush(stdout);
+}
 
+void sig_chld_handler(int sig){
+	waitpid(-1, NULL, WNOHANG);
+	fflush(stdout);
+}
 
 
 

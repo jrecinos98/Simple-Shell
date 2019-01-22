@@ -3,6 +3,11 @@
 #include "main.h"
 
 int main(int argc, char** argv) {
+
+	// Handle signals
+	signal(SIGINT, sig_int_handler);
+	signal(SIGCHLD, sig_chld_handler);
+
 	
 	std::string command_string;
 	while(1){

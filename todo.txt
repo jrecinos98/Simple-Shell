@@ -1,5 +1,4 @@
-handle ctrl-D
 handle < >
-error checks (testing)
-clean up zombie child processes (signal/handler function/SIGCHLD signal)
 handle cd command
+handle ctrl-D
+error checks (testing)
