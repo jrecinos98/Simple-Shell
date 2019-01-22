@@ -111,8 +111,10 @@ void Interpretter::execute_command(){
 		if(size >= 2 && std::string(command[0]) == "cd"){
 			if(command[1] == NULL){
 				chdir(".");
+				perror("ERROR");
 			}else{
 				chdir(command[1]);  // Changes directory to the specified path, MUST BE DONE IN PARENT
+				perror("ERROR");
 			}
 		}
 		delete [] command;
