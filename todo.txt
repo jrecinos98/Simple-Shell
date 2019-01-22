@@ -1,3 +1,2 @@
 handle cat error
-handle ctrl-D
 error checks (testing)

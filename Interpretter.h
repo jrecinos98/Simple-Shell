@@ -10,9 +10,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <iostream>
+#include <fstream>
 
 #define STD_INPUT 0
 #define STD_OUTPUT 1
+#define STD_ERROR 2
 #define BUFSIZE 2048
 
 class Interpretter {
