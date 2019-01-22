@@ -31,6 +31,7 @@ void Interpretter::execute_command(){
 					close(fd);  // Close unneeded file descriptor
 				}else{
 					perror("");  // Output to stderr
+					delete [] command;
 					_exit(1);
 				}
 			}
@@ -45,6 +46,7 @@ void Interpretter::execute_command(){
 					close(fd);  // Close unneeded file descriptor
 				}else{
 					perror("");
+					delete [] command;
 					_exit(1);
 				}
 			}
@@ -52,6 +54,7 @@ void Interpretter::execute_command(){
 
 			// Handle cd command
 			if(size >= 2 && std::string(command[0]) == "cd"){
+				delete [] command;
 				_exit(1);
 			}
 
@@ -107,6 +110,7 @@ void Interpretter::execute_command(){
 			}
 		}
 		close(file_desc);
+		delete [] command;
 		int status;
 		if(this->command_tokens[command_tokens.size() - 1] != "&"){
 			waitpid(pid, &status, 0);
