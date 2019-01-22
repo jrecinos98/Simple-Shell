@@ -10,6 +10,7 @@
 #include <sstream>
 #include "Interpretter.h"
 #include "fd.h"
+#include <algorithm>
 #include <signal.h>  // To handle sig_int 
 
 #define BUFSIZE 2048
@@ -24,6 +25,7 @@ std::vector<std::string> parse_user_input(std::string& command_string) {
 	std::stringstream stringStream(command_string);
 	std::string line;
 	while(std::getline(stringStream, line)) {  // Get stringstream as string line
+		replace(begin(line), end(line), '\t', ' ');
 	    std::size_t prev = 0, pos;
 	    while ((pos = line.find_first_of(" |&<>", prev)) != std::string::npos) {  // Finds the first of the delimiters
 	        if (pos > prev){  // If position i

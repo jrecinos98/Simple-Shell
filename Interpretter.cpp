@@ -1,7 +1,7 @@
 #include "Interpretter.h"
 
 
-const std::vector<char> Interpretter::SPECIAL_TOKENS = {'|', '<', '>', '&'};
+const std::vector<char> Interpretter::SPECIAL_TOKENS = {'|', '<', '>', '&', '\t'};
 int parent_read_fd;
 
 Interpretter::Interpretter(std::vector<std::string> command_tokens, int error_fd[]){
