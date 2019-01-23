@@ -70,11 +70,12 @@ void Interpretter::execute_command(){
 					// Parent
 					close(fd[0]);  // Doesn't need to read from pipe
 					close(STD_OUTPUT);  // Will write to pipe instead
-					dup(fd[1]);  // Put in process table
+					int close_me =dup(fd[1]);  // Put in process table
 					close(fd[1]);  // No longer needed
 					if(size > 0){
 						if(execvp(command[0], command) < 0){
 							perror("");
+							close(close_me);
 						}
 					}
 					int sub_status;
