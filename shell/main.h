@@ -57,6 +57,7 @@ void sig_chld_handler(int sig){
 	int size = read(parent_read_fd, buf, BUFSIZE);
 	if(size > 0){
 		printf("ERROR: %s", buf);
+		fflush(stdout);
 	}
 	close(parent_read_fd);
 	waitpid(-1, NULL, WNOHANG);
